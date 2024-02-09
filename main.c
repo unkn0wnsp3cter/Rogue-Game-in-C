@@ -11,8 +11,10 @@ typedef struct Player
 int screenSetUp();
 int mapSetUp();
 Player * playerSetUp();
+int handleInput(int input, Player * user);
+int playerMove(int y, int x, Player * user);
 
-int main () 
+int main ()
 {
     Player * user;
     int ch;
@@ -24,7 +26,12 @@ int main ()
 
     playerSetUp();
 
+    /*main game loop*/
     while((ch = getch()) != 'q')
+    {
+        handleInput(ch, user);
+
+    }
 
     getch();
 
@@ -41,13 +48,15 @@ int screenSetUp()
     noecho();
     refresh();
 
-    return 0;
+    return 1;
 
 }
 
 
 int mapSetUp()
 {
+
+    /*hardcoded rooms, coords order of operations goes y coord, x coord, "string"*/
     mvprintw(13, 13, "--------");
     mvprintw(14, 13, "|......|");
     mvprintw(15, 13, "|......|");
@@ -79,7 +88,54 @@ Player * playerSetUp()
     newPlayer->yPosition = 14;
     newPlayer->health = 20;
 
-    mvprintw(newPlayer->yPosition, newPlayer->xPosition, "@");
-    move(newPlayer->yPosition, newPlayer->xPosition);
+    playerMove(14, 14, newPlayer);
+    
     return newPlayer;
+}
+
+int handleInput(int input, Player * user)
+{
+    switch(input)
+    {   
+        /*move up*/
+        case 'w':
+        case 'W':
+            playerMove(user->yPosition - 1, user->xPosition, user);
+            break;
+
+        /*move left*/
+        case 'a':
+        case 'A':
+            playerMove(user->yPosition, user->xPosition - 1, user);
+            break;
+
+        /*move down*/
+        case 's':
+        case 'S':
+            playerMove(user->yPosition + 1, user->xPosition, user);
+            break;
+
+        /*move right*/
+        case 'd':
+        case 'D':
+            playerMove(user->yPosition, user->xPosition + 1, user);
+            break;
+
+        default:
+            break;
+
+    }
+
+}
+
+int playerMove(int y, int x, Player * user)
+{
+    mvprintw(user->yPosition, user->xPosition, ".");
+
+    user->yPosition = y;
+    user->xPosition = x;
+
+    mvprintw(user->yPosition, user->xPosition, "@");
+    move(user->yPosition, user->xPosition);
+
 }
