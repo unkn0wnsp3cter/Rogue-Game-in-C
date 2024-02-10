@@ -12,6 +12,7 @@ int screenSetUp();
 int mapSetUp();
 Player * playerSetUp();
 int handleInput(int input, Player * user);
+int checkPosition(int newY, int newX, Player * user);
 int playerMove(int y, int x, Player * user);
 
 int main ()
@@ -95,30 +96,36 @@ Player * playerSetUp()
 
 int handleInput(int input, Player * user)
 {
+    int newY;
+    int newX;
     switch(input)
     {   
         /*move up*/
         case 'w':
         case 'W':
-            playerMove(user->yPosition - 1, user->xPosition, user);
+            newY = user->yPosition - 1;
+            newX = user->xPosition;
             break;
 
         /*move left*/
         case 'a':
         case 'A':
-            playerMove(user->yPosition, user->xPosition - 1, user);
+            newY = user->yPosition;
+            newX = user->xPosition - 1;
             break;
 
         /*move down*/
         case 's':
         case 'S':
-            playerMove(user->yPosition + 1, user->xPosition, user);
+            newY = user->yPosition + 1;
+            newX = user->xPosition;
             break;
 
         /*move right*/
         case 'd':
         case 'D':
-            playerMove(user->yPosition, user->xPosition + 1, user);
+            newY = user->yPosition;
+            newX = user->xPosition + 1;
             break;
 
         default:
@@ -126,7 +133,26 @@ int handleInput(int input, Player * user)
 
     }
 
+    checkPosition(newY, newX, user);
+
 }
+/*collision checker*/
+int checkPosition(int newY, int newX, Player * user)
+{
+    int space;
+    switch (mvinch(newY, newX))
+    {
+        case '.':
+            playerMove(newY, newX, user);
+            break;
+
+        default:
+            move(user->yPosition, user->xPosition);
+            break;
+    }
+
+}
+
 
 int playerMove(int y, int x, Player * user)
 {
